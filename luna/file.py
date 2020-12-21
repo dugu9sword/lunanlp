@@ -10,7 +10,6 @@ from .public import load_var, save_var, exist_var
 logger = logging.getLogger(__name__)
 
 
-
 def _safe_readline(f):
     """
     Adopted from fairseq/binarizer.py
@@ -34,6 +33,10 @@ def safe_file(file_path):
     head, _ = os.path.split(file_path)
     safe_folder(head)
     return file_path
+
+
+def safe_open(file, *args, **kwargs):
+    return open(safe_file(file), *args, **kwargs)
 
 
 def head(filename, n=10):
@@ -82,7 +85,12 @@ class RandomAccessFile:
             if raf_cache['last_modified'] == last_modified:
                 self.offsets = raf_cache['offsets']
             else:
-                logger.warning(f"RandomAccessFile: cache for {filename} is dirty, refresh it")
+                logger.warning(
+                    f"RandomAccessFile: cache for {filename} is dirty, refresh it"
+                )
+        else:
+            logger.warning(
+                f"RandomAccessFile: cache for {filename} not exists")
 
         if self.offsets is None:
             self.offsets = self._gen_offsets()

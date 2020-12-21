@@ -7,6 +7,8 @@ import pickle
 import psutil
 import arrow
 from pathlib import Path
+from typing import Callable, Iterable, Iterator, List
+from itertools import islice
 
 # arg_required = object()
 # arg_optional = object()
@@ -41,17 +43,17 @@ def save_var(variable, name, path=None):
     path = _get_path(path)
     if not path.exists():
         os.makedirs(path, exist_ok=True)
-    pickle.dump(variable, open(path / name / '.pkl', "wb"))
+    pickle.dump(variable, open(path / (name + '.pkl'), "wb"))
 
 
 def load_var(name, path=None):
     path = _get_path(path)
-    return pickle.load(open(path / name / '.pkl', "rb"))
+    return pickle.load(open(path / (name + '.pkl'), "rb"))
 
 
 def exist_var(name, path=None):
     path = _get_path(path)
-    return os.path.exists(path / name / '.pkl')
+    return os.path.exists(path / (name + '.pkl'))
 
 
 def clear_var(name, path=None):
@@ -89,6 +91,7 @@ def run_once(f):
 
     wrapper.has_run = False
     return wrapper
+
 
 
 @contextmanager
