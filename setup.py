@@ -15,13 +15,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     platforms="any",
-    install_requires=[
-        "colorama",
-        "arrow",
-        "psutil",
-        "numpy",
-        "tabulate",
-    ],
+    install_requires=open("requirements.txt").readlines(),
     zip_safe=False,
 
     scripts=[],
