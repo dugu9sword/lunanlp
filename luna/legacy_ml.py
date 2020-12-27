@@ -1,10 +1,8 @@
-import time
 import random
+import time
 from typing import List
-import numpy as np
-import os
-import re
 
+import numpy as np
 
 # def checkpoint_paths(path, pattern=r'checkpoint@(\d+)\.pt'):
 #     """Retrieves all checkpoints found in `path` directory.

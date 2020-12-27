@@ -1,7 +1,7 @@
 import argparse
 import inspect
-import re
 import io
+import re
 import tokenize
 from typing import Dict, List, NamedTuple
 
@@ -48,7 +48,6 @@ class ProgramArgs:
     """
     def __init__(self):
         self._KEY_INFOS_: KEY_INFO_DICT = {}
-        pass
 
     def __repr__(self):
         basic_ret = ""
@@ -58,12 +57,12 @@ class ProgramArgs:
             basic_ret += "\t--{}={}\n".format(key, value)
 
         deduced_ret = ""
-        deduced_args = [
-            ele for ele in dir(self)
-            if ele[0] != '_' and ele not in self.__dict__
-        ]
-        for key in deduced_args:
-            deduced_ret += "\t--{}={}\n".format(key, getattr(self, key))
+        for ele in dir(self):
+            if ele[0] == '_' or \
+                ele in self.__dict__ or \
+                    inspect.ismethod(getattr(self, ele)):
+                continue
+            deduced_ret += "\t--{}={}\n".format(ele, getattr(self, ele))
 
         ret = "Basic Args:\n" + basic_ret
         if deduced_ret != "":

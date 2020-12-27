@@ -1,8 +1,7 @@
-from typing import List, Union
-import numpy as np
-import inspect
-from typing import List, Iterable, Iterator, Callable
 from itertools import islice
+from typing import Callable, Iterable, Iterator, List, Union
+
+import numpy as np
 
 # class Aggregator:
 #     """You may use an Aggregator to aggregate values any where,

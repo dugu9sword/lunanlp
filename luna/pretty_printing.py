@@ -1,6 +1,7 @@
-from colorama import Fore, Back
-from tabulate import tabulate
 import inspect
+
+from colorama import Back, Fore
+from tabulate import tabulate
 
 
 class Color(object):

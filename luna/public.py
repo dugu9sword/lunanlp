@@ -1,14 +1,13 @@
 import logging
 import os
+import pickle
 import time
 from contextlib import contextmanager
-import numpy as np
-import pickle
-import psutil
-import arrow
 from pathlib import Path
-from typing import Callable, Iterable, Iterator, List
-from itertools import islice
+
+import arrow
+import numpy as np
+import psutil
 
 # arg_required = object()
 # arg_optional = object()
@@ -58,7 +57,7 @@ def exist_var(name, path=None):
 
 def clear_var(name, path=None):
     path = _get_path(path)
-    os.remove(path / name / '.pkl')
+    os.remove(path / (name + '.pkl'))
 
 
 def auto_create(name, func, refresh_cache=False, path=None):

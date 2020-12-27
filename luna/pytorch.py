@@ -1,14 +1,15 @@
-import re
-from typing import Dict
-from .public import *
-import torch
-import random
-import numpy as np
 import os
-from .public import exist_var, save_var, load_var
-from functools import lru_cache
-from .ram import ram_read, ram_append, ram_reset
+import random
+import re
 import time
+from functools import lru_cache
+from typing import Dict
+
+import numpy as np
+import torch
+from tqdm import tqdm
+
+from .ram import ram_append, ram_read, ram_reset
 
 __model_path__ = "saved/models"
 
@@ -184,44 +185,35 @@ def find_module(model, name: str, match_type='partial'):
     return modules
 
 
-def load_word2vec(embedding: torch.nn.Embedding,
-                  word_dict: Dict[str, int],
+def load_word2vec(word_dict: Dict[str, int],
                   word2vec_path,
-                  norm=True,
-                  cached_name=None):
-    cache = "{}{}".format(cached_name, ".norm" if norm else "")
-    if cached_name and exist_var(cache):
-        print("Load word2vec from cache {}".format(cache))
-        pre_embedding = load_var(cache)
-    else:
-        print("Load word2vec from {}".format(word2vec_path))
-        pre_embedding = np.random.normal(0, 1, embedding.weight.size())
-        word2vec_file = open(word2vec_path, errors='ignore')
-        # x = 0
-        found = 0
-        emb_size = -1
-        error_num = 0
-        for line in word2vec_file.readlines():
-            # x += 1
-            # print("Process line {} in file {}".format(x, word2vec_path))
-            split = re.split(r"\s+", line.strip())
-            if emb_size == -1:
-                emb_size = len(split) - 1
-            if len(split) != emb_size + 1 or len(split) < 10:
-                error_num += 1
-                continue
-            word = split[0]
-            if word in word_dict:
-                found += 1
-                pre_embedding[word_dict[word]] = np.array(
-                    list(map(float, split[1:])))
-        print("Error line: ", error_num)
-        print("Pre_train match case: {:.4f}".format(found / len(word_dict)))
-        if norm:
-            pre_embedding = pre_embedding / np.std(pre_embedding)
-        if cached_name:
-            save_var(pre_embedding, cache)
-    embedding.weight.data.copy_(torch.from_numpy(pre_embedding))
+                  dim,
+                  norm=True):
+    print("Load word2vec from {}".format(word2vec_path))
+    pre_embedding = np.random.normal(0, 1, (len(word_dict), dim))
+    # x = 0
+    found = 0
+    emb_size = -1
+    error_num = 0
+    for line in tqdm(open(word2vec_path, errors='ignore')):
+        # x += 1
+        # print("Process line {} in file {}".format(x, word2vec_path))
+        split = re.split(r"\s+", line.strip())
+        if emb_size == -1:
+            emb_size = len(split) - 1
+        if len(split) != emb_size + 1 or len(split) < 10:
+            error_num += 1
+            continue
+        word = split[0]
+        if word in word_dict:
+            found += 1
+            pre_embedding[word_dict[word]] = np.array(
+                list(map(float, split[1:])))
+    print("Error line: ", error_num)
+    print("Pre_train match case: {:.4f}".format(found / len(word_dict)))
+    if norm:
+        pre_embedding = pre_embedding / np.std(pre_embedding)
+    return torch.from_numpy(pre_embedding)
 
 
 def show_mean_std(tensor, name=""):

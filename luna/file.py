@@ -1,11 +1,9 @@
-import os
-from pathlib import Path
-import pickle
-from contextlib import contextmanager
-import time
-import re
 import logging
-from .public import load_var, save_var, exist_var
+import os
+import re
+from pathlib import Path
+
+from .public import exist_var, load_var, save_var
 
 logger = logging.getLogger(__name__)
 

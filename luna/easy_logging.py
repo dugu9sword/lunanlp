@@ -1,7 +1,8 @@
 import os
-from typing import List
-import arrow
 from inspect import isfunction
+from typing import List
+
+import arrow
 
 __log_path__ = "logs"
 globals()["__default_target__"] = 'c'
