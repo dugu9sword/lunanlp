@@ -3,3 +3,5 @@ test.py
 **/*.pyc
 **/__pycache__/*
 **/*.egg-info/*
+.venv/*
+build/*

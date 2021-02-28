@@ -9,7 +9,7 @@ import numpy as np
 import torch
 from tqdm import tqdm
 
-from .ram import ram_append, ram_read, ram_reset
+from . import ram
 
 __model_path__ = "saved/models"
 
@@ -68,10 +68,10 @@ def guess_bert(model):
 def register_layer_hook(layer):
     # grad_in/grad_out/inputs are tuples, outputs is a tensor
     def fw_hook_layers(module, inputs, outputs):
-        ram_append('LAYER_HOOK.fw', outputs)
+        ram.append('LAYER_HOOK.fw', outputs)
 
     def bw_hook_layers(module, grad_in, grad_out):
-        ram_append('LAYER_HOOK.bw', grad_out[0])
+        ram.append('LAYER_HOOK.bw', grad_out[0])
 
     fw_hook = layer.register_forward_hook(fw_hook_layers)
     bw_hook = layer.register_backward_hook(bw_hook_layers)
@@ -79,13 +79,13 @@ def register_layer_hook(layer):
 
 
 def read_layer_hook(order):
-    fw = ram_read('LAYER_HOOK.fw')[order]
-    bw = ram_read('LAYER_HOOK.bw')[-(order + 1)]
+    fw = ram.read('LAYER_HOOK.fw')[order]
+    bw = ram.read('LAYER_HOOK.bw')[-(order + 1)]
     return fw, bw
 
 
 def reset_layer_hook():
-    ram_reset("LAYER_HOOK")
+    ram.reset("LAYER_HOOK")
 
 
 def gpu(*x):
@@ -252,96 +252,7 @@ def set_seed(seed):
     torch.cuda.manual_seed_all(seed)
 
 
-# @deprecated
-# def ten2var(x):
-#     return gpu(torch.autograd.Variable(x))
 
-# @deprecated
-# def long2var(x):
-#     return gpu(torch.autograd.Variable(torch.LongTensor(x)))
-
-# @deprecated
-# def float2var(x):
-#     return gpu(torch.autograd.Variable(torch.FloatTensor(x)))
-
-# def var2list(x):
-#     return x.cpu().data.numpy().tolist()
-
-# def var2num(x):
-#     return x.cpu().data[0]
-
-# def flip_by_length(inputs, lengths):
-#     rev_inputs = []
-#     for it_id, it_input in enumerate(inputs):
-#         it_len = lengths[it_id]
-#         rev_input = torch.cat([
-#             it_input.index_select(0, torch.tensor(list(reversed(range(it_len)))).to(inputs.device)),
-#             torch.zeros_like(it_input[it_len:]).to(inputs.device)
-#         ])
-#         rev_inputs.append(rev_input)
-#     rev_inputs = torch.stack(rev_inputs)
-#     return rev_inputs
-
-# class LabelSmoothingLoss(torch.nn.Module):
-#     def __init__(self, smoothing=0.0, dim=-1):
-#         super(LabelSmoothingLoss, self).__init__()
-#         self.smoothing = smoothing
-#         self.dim = dim
-
-#     def forward(self, pred, target):
-#         pred = pred.print_softmax(dim=self.dim)
-#         with torch.no_grad():
-#             # true_dist = pred.data.clone()
-#             true_dist = torch.zeros_like(pred)
-#             true_dist.fill_(self.smoothing / (pred.size(-1) - 1))
-#             true_dist.scatter_(1, target.data.unsqueeze(1), 1 - self.smoothing)
-#         return torch.mean(torch.sum(-true_dist * pred, dim=self.dim))
-
-# def focal_loss(inputs,
-#                targets,
-#                gamma=2, alpha=None, reduction="mean"):
-#     batch_size = inputs.size(0)
-#     num_classes = inputs.size(1)
-#     prob = F.softmax(inputs, dim=1).clamp(1e-10, 1.)
-#     # prob = inputs.exp()
-#
-#     class_mask = inputs.data.new(batch_size, num_classes).fill_(0)
-#     ids = targets.view(-1, 1)
-#     class_mask.scatter_(1, ids.data, 1.)
-#     if alpha is None:
-#         alpha = torch.ones(num_classes, 1).to(inputs.device)
-#     alpha = alpha[ids.data.view(-1)]
-#
-#     probs = (prob * class_mask).sum(1).view(-1, 1)
-#
-#     print_p = probs.print()
-#
-#     batch_loss = -alpha * (torch.pow((1 - probs), gamma)) * print_p
-#
-#     if reduction == "mean":
-#         loss = batch_loss.mean()
-#     elif reduction == "sum":
-#         loss = batch_loss.sum()
-#     elif reduction == "zheng":
-#         pred = torch.argmax(inputs, dim=1)
-#         ce_mask = pred != targets
-#         loss = torch.mean(batch_loss * ce_mask)
-#     elif reduction == "none":
-#         loss = batch_loss
-#     else:
-#         raise Exception()
-#     return loss
-
-# class NonLinearLayerWithRes(torch.nn.Module):
-#     def __init__(self, d_in, d_hidden, dropout):
-#         super(NonLinearLayerWithRes, self).__init__()
-#         self.fc1 = torch.nn.Linear(d_in, d_hidden)
-#         self.fc2 = torch.nn.Linear(d_hidden, d_in)
-#         self.drop = torch.nn.Dropout(dropout)
-#
-#     def forward(self, x):
-#         out = self.fc2(F.relu(self.fc1(x)))
-#         out += x
-#         out = self.drop(out)
-#         # out = torch.nn.LayerNorm(out)
-#         return out
+if __name__ == "__main__":
+    import doctest
+    doctest.testmod()

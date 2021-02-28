@@ -1,4 +1,5 @@
 from .public import *
+from . import ram
 
 try:
     from .pytorch import *
@@ -7,9 +8,7 @@ except:
 from .collections import *
 from .easy_logging import *
 from .file import *
-from .legacy_ml import *
 from .pretty_printing import *
 from .program_args import *
-from .ram import *
 from .registry import *
 from .sequence import *

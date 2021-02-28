@@ -158,11 +158,11 @@ def chunks(lst, chunk_size):
         yield lst[i:i + chunk_size]
 
 
-# def show_mem():
-#     top = psutil.Process(os.getpid())
-#     info = top.memory_full_info()
-#     memory = info.uss / 1024. / 1024.
-#     print('Memory: {:.2f} MB'.format(memory))
+def show_mem():
+    top = psutil.Process(os.getpid())
+    info = top.memory_full_info()
+    memory = info.uss / 1024. / 1024.
+    print('Memory: {:.2f} MB'.format(memory))
 
 # def deprecated(message: str = ''):
 #     """

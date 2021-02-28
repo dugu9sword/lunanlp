@@ -11,98 +11,90 @@ The values to store in a RAM have the below features:
         value in the group before reusing them will add a great overhead to the code.
 """
 
-__global_ram = {}
+__memory = {}
 
 
-def ram_list():
-    return sorted(list(__global_ram.keys()))
+def list_keys():
+    return sorted(list(__memory.keys()))
 
 
-def ram_write(k, v):
-    __global_ram[k] = v
+def write(k, v):
+    __memory[k] = v
 
 
-def ram_pop(k):
-    return __global_ram.pop(k)
+def pop(k):
+    return __memory.pop(k)
 
 
-def ram_append(k, v):
-    if k not in __global_ram:
-        __global_ram[k] = []
-    __global_ram[k].append(v)
+def append(k, v):
+    if k not in __memory:
+        __memory[k] = []
+    __memory[k].append(v)
 
 
-def ram_inc(k):
-    if k not in __global_ram:
-        __global_ram[k] = 0
-    __global_ram[k] = __global_ram[k] + 1
+def inc(k):
+    if k not in __memory:
+        __memory[k] = 0
+    __memory[k] = __memory[k] + 1
 
 
-def ram_read(k):
-    return __global_ram[k]
+def read(k):
+    return __memory[k]
 
 
-def ram_has(k):
-    return k in __global_ram
+def has(k):
+    return k in __memory
 
 
 def flag_name(k):
     return f"RAM_FLAG_{k}"
 
 
-def ram_set_flag(k):
-    ram_write(flag_name(k), True)
+def set_flag(k):
+    write(flag_name(k), True)
 
 
-def ram_reset_flag(k):
-    if ram_has(flag_name(k)):
-        ram_pop(flag_name(k))
+def reset_flag(k):
+    if has(flag_name(k)):
+        pop(flag_name(k))
 
 
-def ram_has_flag(k, verbose_once=False):
-    ret = ram_has(flag_name(k)) and ram_read(flag_name(k)) is True
-    if verbose_once and not ram_has_flag(f"VERBOSE_ONCE_{flag_name(k)}"):
+def has_flag(k, verbose_once=False):
+    ret = has(flag_name(k)) and read(flag_name(k)) is True
+    if verbose_once and not has_flag(f"VERBOSE_ONCE_{flag_name(k)}"):
         print(
             f"INFO: check the flag {k}={ret}, the information only occurs once."
         )
-        ram_set_flag(f"VERBOSE_ONCE_{flag_name(k)}")
+        set_flag(f"VERBOSE_ONCE_{flag_name(k)}")
     return ret
 
 
-def ram_globalize(name=None):
+def globalize(name=None):
     if name is None:
 
         def wrapper(fun):
-            if fun.__name__ in __global_ram:
+            if fun.__name__ in __memory:
                 raise Exception("{} already in ram.".format(fun.__name__))
-            __global_ram[fun.__name__] = fun
+            __memory[fun.__name__] = fun
             return fun
     else:
 
         def wrapper(fun):
-            if name in __global_ram:
+            if name in __memory:
                 raise Exception("{} already in ram.".format(name))
-            __global_ram[name] = fun
+            __memory[name] = fun
             return fun
 
     return wrapper
 
 
-# def ram_linear_analyze(k):
-# y = __global_ram[k]
-# x = list(range(len(y)))
-# reg = LinearRegression().fit(np.array(x).reshape(-1, 1),
-#                              np.array(y).reshape(-1, 1))
-# return "y={:4.2f}*x+{:4.2f}".format(cast_item(reg.coef_), cast_item(reg.intercept_))
-
-
-def ram_reset(prefix=None):
+def reset(prefix=None):
     if prefix is not None:
         to_reset = []
-        for key in __global_ram:
+        for key in __memory:
             if key.startswith(prefix):
                 to_reset.append(key)
         for key in to_reset:
-            __global_ram.pop(key)
+            __memory.pop(key)
     else:
-        __global_ram.clear()
+        __memory.clear()
