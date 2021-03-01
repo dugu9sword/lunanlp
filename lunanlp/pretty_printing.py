@@ -2,6 +2,7 @@ import inspect
 
 from colorama import Back, Fore
 from tabulate import tabulate
+import torch
 
 
 class Color(object):
