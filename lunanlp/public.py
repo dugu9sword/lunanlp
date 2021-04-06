@@ -164,6 +164,15 @@ def show_mem():
     memory = info.uss / 1024. / 1024.
     print('Memory: {:.2f} MB'.format(memory))
 
+
+def wait_for_debug():
+    if "DBGPY" not in globals():
+        import debugpy
+        globals()["DBGPY"]=1
+        debugpy.listen(("127.0.0.1", 5678))
+        debugpy.wait_for_client()
+        debugpy.breakpoint()
+
 # def deprecated(message: str = ''):
 #     """
 #     This is a decorator which can be used to mark functions
