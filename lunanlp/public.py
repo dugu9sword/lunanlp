@@ -4,7 +4,7 @@ import pickle
 import time
 from contextlib import contextmanager
 from pathlib import Path
-import ram
+from . import ram
 
 import arrow
 import numpy as np
@@ -37,6 +37,13 @@ def not_executed(flag):
     else:
         ram.set_flag(flag)
         return True
+
+
+def print_once(msg):
+    flag = f"_PRINT_ONCE_FLAG_{msg}"
+    if not ram.has_flag(flag):
+        print(msg)
+    ram.set_flag(flag)
 
 
 def _get_path(path=None) -> Path:
