@@ -4,6 +4,7 @@ import pickle
 import time
 from contextlib import contextmanager
 from pathlib import Path
+import ram
 
 import arrow
 import numpy as np
@@ -27,6 +28,15 @@ def time_record(sth=None):
         print(sth, "cost {:.3} seconds".format(end - start))
     else:
         print("cost {:.3} seconds".format(end - start))
+
+
+def not_executed(flag):
+    flag = f"_EXECUTE_ONCE_FLAG_{flag}"
+    if ram.has_flag(flag):
+        return False
+    else:
+        ram.set_flag(flag)
+        return True
 
 
 def _get_path(path=None) -> Path:
