@@ -120,6 +120,17 @@ def numpy_seed(seed):
         np.random.set_state(state)
 
 
+@contextmanager
+def torch_seed(seed):
+    state = torch.random.get_rng_state()
+    state_cuda = torch.cuda.random.get_rng_state()
+    try:
+        yield
+    finally:
+        torch.random.set_rng_state(state)
+        torch.cuda.andom.set_rng_state(state_cuda)
+
+
 def lazy_property(func):
     attr_name = "_lazy_" + func.__name__
 
