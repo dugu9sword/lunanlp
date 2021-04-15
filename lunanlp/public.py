@@ -125,6 +125,8 @@ def numpy_seed(seed):
 def torch_seed(seed):
     state = torch.random.get_rng_state()
     state_cuda = torch.cuda.random.get_rng_state()
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
     try:
         yield
     finally:
