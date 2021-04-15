@@ -129,7 +129,7 @@ def torch_seed(seed):
         yield
     finally:
         torch.random.set_rng_state(state)
-        torch.cuda.andom.set_rng_state(state_cuda)
+        torch.cuda.random.set_rng_state(state_cuda)
 
 
 def lazy_property(func):
