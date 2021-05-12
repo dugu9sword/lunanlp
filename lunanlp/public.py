@@ -30,6 +30,23 @@ def time_record(sth=None):
     else:
         print("cost {:.3} seconds".format(end - start))
 
+@contextmanager
+def timeit(sth, times=20):
+    start = time.time()
+    yield
+    end = time.time()
+    key = f"__TIMEIT__{sth}"
+    if not ram.has(key):
+        ram.write((1, end - start))
+    else:
+        agg_num, agg_cost = ram.read(key)
+        agg_num += 1
+        agg_cost += end - start
+        ram.write((agg_num , agg_cost))
+        if agg_num == times:
+            print(sth, "cost {:.3} seconds per call".format(agg_cost / agg_num))
+            ram.pop(key)
+
 
 def not_executed(flag):
     flag = f"_EXECUTE_ONCE_FLAG_{flag}"
