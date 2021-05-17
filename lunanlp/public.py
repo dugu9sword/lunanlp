@@ -127,6 +127,14 @@ def run_once(f):
     return wrapper
 
 
+def each_caller_run_once(f):
+    def wrapper(*args, **kwargs):
+        if args[0] not in wrapper.callers:
+            wrapper.callers.add(args[0])
+            return f(*args, **kwargs)
+    wrapper.callers = set()
+    return wrapper
+
 
 @contextmanager
 def numpy_seed(seed):
