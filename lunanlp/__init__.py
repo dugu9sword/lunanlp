@@ -1,5 +1,5 @@
-from .public import *
 from . import ram
+from .public import *
 
 try:
     from .pytorch import *

@@ -8,18 +8,20 @@ __log_path__ = "logs"
 globals()["__default_target__"] = 'c'
 
 
-def log_config(filename,
-               default_target,
-               log_path=__log_path__,
-               append=False,
-               ):
+def log_config(
+    filename,
+    default_target,
+    log_path=__log_path__,
+    append=False,
+):
     if not os.path.exists(log_path):
         os.makedirs(log_path, exist_ok=True)
     log_time = arrow.now().format('MMMDD_HH-mm-ss')
-    
+
     def __lazy():
         return open("{}/{}.{}.txt".format(log_path, filename, log_time),
                     "a" if append else "w")
+
     logger = __lazy
     globals()["__logger__"] = logger
     globals()["__default_target__"] = default_target
@@ -59,5 +61,3 @@ def log_to_buffer(*info):
 def log_flush_buffer(target=None):
     log("\n".join(log_buffer), target=target)
     log_buffer.clear()
-
-

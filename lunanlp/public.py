@@ -4,12 +4,13 @@ import pickle
 import time
 from contextlib import contextmanager
 from pathlib import Path
-from . import ram
-import torch
 
 import arrow
 import numpy as np
 import psutil
+import torch
+
+from . import ram
 
 # arg_required = object()
 # arg_optional = object()
@@ -30,6 +31,7 @@ def time_record(sth=None):
     else:
         print("cost {:.3} seconds".format(end - start))
 
+
 @contextmanager
 def timeit(sth, times=10):
     start = time.time()
@@ -42,9 +44,10 @@ def timeit(sth, times=10):
         agg_num, agg_cost = ram.read(key)
         agg_num += 1
         agg_cost += end - start
-        ram.write(key, (agg_num , agg_cost))
+        ram.write(key, (agg_num, agg_cost))
         if agg_num == times:
-            print(sth, "cost {:.3} seconds per call".format(agg_cost / agg_num))
+            print(sth,
+                  "cost {:.3} seconds per call".format(agg_cost / agg_num))
             ram.pop(key)
 
 
@@ -132,6 +135,7 @@ def each_caller_run_once(f):
         if args[0] not in wrapper.callers:
             wrapper.callers.add(args[0])
             return f(*args, **kwargs)
+
     wrapper.callers = set()
     return wrapper
 
@@ -224,10 +228,11 @@ def show_mem():
 def wait_for_debug():
     if "DBGPY" not in globals():
         import debugpy
-        globals()["DBGPY"]=1
+        globals()["DBGPY"] = 1
         debugpy.listen(("127.0.0.1", 5678))
         debugpy.wait_for_client()
         debugpy.breakpoint()
+
 
 # def deprecated(message: str = ''):
 #     """

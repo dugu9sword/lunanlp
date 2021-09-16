@@ -1,8 +1,8 @@
 import inspect
 
+import torch
 from colorama import Back, Fore
 from tabulate import tabulate
-import torch
 
 
 class Color(object):
@@ -71,8 +71,8 @@ def print_num_list(lst, fmt=":6.2f"):
     fmter = "{{{}}}".format(fmt)
     str_lst = [fmter.format(ele) for ele in lst]
     print(" ".join(str_lst))
-    
-    
+
+
 def print_tensor_dict(tensor_dict):
     """
     >>> dct = {
@@ -90,6 +90,7 @@ def print_tensor_dict(tensor_dict):
     >>> print_tensor_dict(dct)
     """
     indent_size = 4
+
     def prettyformat(k, v, indent=0):
         if isinstance(v, dict):
             if k is not None:
@@ -109,4 +110,5 @@ def print_tensor_dict(tensor_dict):
             if len(v_str) > 50:
                 v_str = "{}, {}...".format(type(v), v_str[:50])
             return ["{}{}: {}".format(indent * " ", k, v_str)]
+
     print("\n".join(prettyformat(None, tensor_dict, 0)))

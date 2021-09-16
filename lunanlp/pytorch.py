@@ -185,10 +185,7 @@ def find_module(model, name: str, match_type='partial'):
     return modules
 
 
-def load_word2vec(word_dict: Dict[str, int],
-                  word2vec_path,
-                  dim,
-                  norm=True):
+def load_word2vec(word_dict: Dict[str, int], word2vec_path, dim, norm=True):
     print("Load word2vec from {}".format(word2vec_path))
     pre_embedding = np.random.normal(0, 1, (len(word_dict), dim))
     # x = 0
@@ -250,7 +247,6 @@ def set_seed(seed):
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
-
 
 
 if __name__ == "__main__":
