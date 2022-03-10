@@ -1,8 +1,6 @@
 from itertools import islice
 from typing import Callable, Iterable, Iterator, List, Union
 
-import numpy as np
-
 
 def group_fields(lst: List[object],
                  keys: Union[str, List[str]] = None,
@@ -38,48 +36,6 @@ def group_fields(lst: List[object],
         return ret
 
 
-class CherryPicker:
-    def __init__(self, lower_is_better, compare_fn=None):
-        self.lower_is_better = lower_is_better
-        self.history_values = []
-        self.history_infos = []
-        self.compare_fn = compare_fn
-
-    def add(self, value, info):
-        self.history_infos.append(info)
-        self.history_values.append(value)
-
-    @property
-    def size(self):
-        return len(self.history_values)
-
-    def select_best_point(self):
-        if self.size == 0:
-            raise Exception("Nothing to pick.")
-        # np.argmin selects the first occurrence of the min
-        if self.compare_fn is None:
-            if self.lower_is_better:
-                chosen_id = int(np.argmin(self.history_values))
-            else:
-                chosen_id = int(np.argmax(self.history_values))
-        else:
-            chosen_id = len(self.history_values) - 1
-            chosen_val = self.history_values[-1]
-            for i in reversed(range(len(self.history_values))):
-                if self.lower_is_better:
-                    if self.compare_fn(self.history_values[i],
-                                       chosen_val) <= 0:
-                        chosen_id = i
-                        chosen_val = self.history_values[chosen_id]
-                else:
-                    if self.compare_fn(self.history_values[i],
-                                       chosen_val) >= 0:
-                        chosen_id = i
-                        chosen_val = self.history_values[chosen_id]
-        return chosen_id, self.history_values[chosen_id], self.history_infos[
-            chosen_id]
-
-
 def lazy_group_by_size(iterable: Iterable, group_size: int) -> Iterator[List]:
     iterator = iter(iterable)
     while True:
@@ -106,6 +62,20 @@ def lazy_group_by_max_tokens(
             count = 0
     if len(batch) > 0:
         yield batch
+
+
+def locate_chunk(num_total, num_chunk, chunk_id):
+    start = num_total // num_chunk * chunk_id
+    end = num_total // num_chunk * (chunk_id + 1)
+    if chunk_id == num_chunk - 1:
+        end = num_total
+    return start, end
+
+
+def chunks(lst, chunk_size):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), chunk_size):
+        yield lst[i:i + chunk_size]
 
 
 if __name__ == "__main__":

@@ -2,7 +2,6 @@ import os
 import random
 import re
 import time
-from functools import lru_cache
 from typing import Dict
 
 import numpy as np
@@ -54,15 +53,6 @@ def allocate_cuda_device(cuda_idx) -> torch.device:
 
 def set_gpu_device(device_id):
     torch.cuda.set_device(device_id)
-
-
-@lru_cache(maxsize=None)
-def guess_bert(model):
-    counts = 0
-    for name, param in model.named_parameters():
-        if 'bert' in name:
-            counts += 1
-    return counts > 3
 
 
 def register_layer_hook(layer):
@@ -211,14 +201,6 @@ def load_word2vec(word_dict: Dict[str, int], word2vec_path, dim, norm=True):
     if norm:
         pre_embedding = pre_embedding / np.std(pre_embedding)
     return torch.from_numpy(pre_embedding)
-
-
-def show_mean_std(tensor, name=""):
-    print("[INFO] {} Mean {:.4f} Std {:.4f} Max {:.4f}".format(
-        name,
-        tensor.mean().item(),
-        tensor.std().item(),
-        tensor.max().item()))
 
 
 def idx_to_msk(idx, num_classes):

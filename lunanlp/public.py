@@ -204,20 +204,6 @@ def time_stamp():
     return arrow.now().format('MMMDD_HH-mm-ss')
 
 
-def locate_chunk(num_total, num_chunk, chunk_id):
-    start = num_total // num_chunk * chunk_id
-    end = num_total // num_chunk * (chunk_id + 1)
-    if chunk_id == num_chunk - 1:
-        end = num_total
-    return start, end
-
-
-def chunks(lst, chunk_size):
-    """Yield successive n-sized chunks from lst."""
-    for i in range(0, len(lst), chunk_size):
-        yield lst[i:i + chunk_size]
-
-
 def show_mem():
     top = psutil.Process(os.getpid())
     info = top.memory_full_info()
@@ -232,26 +218,3 @@ def wait_for_debug():
         debugpy.listen(("127.0.0.1", 5678))
         debugpy.wait_for_client()
         debugpy.breakpoint()
-
-
-# def deprecated(message: str = ''):
-#     """
-#     This is a decorator which can be used to mark functions
-#     as deprecated. It will result in a warning being emitted
-#     when the function is used first time and filter is set for show DeprecationWarning.
-#     """
-#     def decorator_wrapper(func):
-#         @functools.wraps(func)
-#         def function_wrapper(*args, **kwargs):
-#             current_call_source = '|'.join(
-#                 traceback.format_stack(inspect.currentframe()))
-#             if current_call_source not in function_wrapper.last_call_source:
-#                 warnings.warn("Function {} is now deprecated! {}".format(
-#                     func.__name__, message),
-#                               category=DeprecationWarning,
-#                               stacklevel=2)
-#                 function_wrapper.last_call_source.add(current_call_source)
-#             return func(*args, **kwargs)
-#         function_wrapper.last_call_source = set()
-#         return function_wrapper
-#     return decorator_wrapper

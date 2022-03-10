@@ -2,6 +2,7 @@ import importlib
 import sys
 from contextlib import contextmanager
 
+
 @contextmanager
 def safe_import(folder, module_name):
     """
@@ -20,7 +21,7 @@ def safe_import(folder, module_name):
     print(f"Safe import from {folder} ...")
     sys.path.insert(0, folder)
     importlib.import_module(module_name)
-    
+
     yield
 
     sys.path.remove(folder)
@@ -30,6 +31,3 @@ def safe_import(folder, module_name):
             keys.append(key)
     for key in keys:
         sys.modules.pop(key)
-
-
- 
