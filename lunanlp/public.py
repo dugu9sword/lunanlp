@@ -46,8 +46,7 @@ def timeit(sth, times=10):
         agg_cost += end - start
         ram.write(key, (agg_num, agg_cost))
         if agg_num == times:
-            print(sth,
-                  "cost {:.3} seconds per call".format(agg_cost / agg_num))
+            print(sth, "cost {:.3} seconds per call".format(agg_cost / agg_num))
             ram.pop(key)
 
 
@@ -218,3 +217,10 @@ def wait_for_debug():
         debugpy.listen(("127.0.0.1", 5678))
         debugpy.wait_for_client()
         debugpy.breakpoint()
+
+
+def chain(arg, *funcs):
+    result = arg
+    for f in funcs:
+        result = f(result)
+    return result

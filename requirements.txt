@@ -4,3 +4,4 @@ psutil
 numpy
 tabulate
 debugpy
+tqdm
